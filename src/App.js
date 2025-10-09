@@ -42,7 +42,7 @@ export default function App() {
 
   return (
     <div style={{ padding: 12, fontFamily: "Segoe UI, sans-serif" }}>
-      <h3>📁 .docx Files</h3>
+      <h3>📁 Vault Files</h3>
       {files.length === 0 && (
         <div>No files found. Put .docx files into server/files/</div>
       )}
