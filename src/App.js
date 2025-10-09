@@ -69,7 +69,7 @@
 // }
 
 import React, { useEffect, useState } from "react";
-import { insertHtmlToWord } from "./wordHelper";
+import { insertHtmlToWord, clearWordBody } from "./wordHelper";
 
 export default function App() {
   const [files, setFiles] = useState([]);
@@ -94,6 +94,16 @@ export default function App() {
   const onClick = async (f) => {
     setSelected(f.name);
     setLoading(true);
+
+    // Clear left panel immediately and show placeholder
+    try {
+      await clearWordBody();
+      await insertHtmlToWord("<p>Loading document...</p>");
+    } catch (e) {
+      console.error("Error clearing Word panel", e);
+    }
+
+    // Fetch and insert the actual document
     try {
       const res = await fetch(
         `https://ms-word-add-in-backend.vercel.app/file?name=${encodeURIComponent(
@@ -102,7 +112,6 @@ export default function App() {
       );
       const js = await res.json(); // { html }
 
-      // Clear previous content and insert new document
       await insertHtmlToWord(js.html);
     } catch (e) {
       console.error(e);
