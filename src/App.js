@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { insertHtmlToWord } from './wordHelper';
+import React, { useEffect, useState } from "react";
+import { insertHtmlToWord } from "./wordHelper";
 
 export default function App() {
   const [files, setFiles] = useState([]);
@@ -9,7 +9,9 @@ export default function App() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch('http://localhost:4000/files');
+        const res = await fetch(
+          "https://ms-word-add-in-backend.vercel.app/files"
+        );
         const js = await res.json();
         setFiles(js);
       } catch (e) {
@@ -23,32 +25,40 @@ export default function App() {
     setSelected(f.name);
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:4000/file?name=${encodeURIComponent(f.name)}`);
+      const res = await fetch(
+        `https://ms-word-add-in-backend.vercel.app/file?name=${encodeURIComponent(
+          f.name
+        )}`
+      );
       const js = await res.json(); // { html }
       await insertHtmlToWord(js.html);
     } catch (e) {
       console.error(e);
-      alert('Error loading file: ' + e.message);
+      alert("Error loading file: " + e.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: 12, fontFamily: 'Segoe UI, sans-serif' }}>
+    <div style={{ padding: 12, fontFamily: "Segoe UI, sans-serif" }}>
       <h3>📁 .docx Files</h3>
-      {files.length === 0 && <div>No files found. Put .docx files into server/files/</div>}
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {files.map(f => (
-          <li key={f.name}
-              onClick={() => onClick(f)}
-              style={{
-                padding: '8px',
-                margin: '6px 0',
-                borderRadius: 6,
-                cursor: 'pointer',
-                background: selected === f.name ? '#e6f2ff' : '#f7f7f7'
-              }}>
+      {files.length === 0 && (
+        <div>No files found. Put .docx files into server/files/</div>
+      )}
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        {files.map((f) => (
+          <li
+            key={f.name}
+            onClick={() => onClick(f)}
+            style={{
+              padding: "8px",
+              margin: "6px 0",
+              borderRadius: 6,
+              cursor: "pointer",
+              background: selected === f.name ? "#e6f2ff" : "#f7f7f7",
+            }}
+          >
             {f.name}
           </li>
         ))}
