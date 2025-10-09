@@ -79,7 +79,9 @@ export default function App() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("https://vercel.app/files");
+        const res = await fetch(
+          "https://ms-word-add-in-backend.vercel.app/files"
+        );
         const js = await res.json();
         setFiles(js);
       } catch (e) {
@@ -94,7 +96,9 @@ export default function App() {
     setLoading(true);
     try {
       const res = await fetch(
-        `https://vercel.app/file?name=${encodeURIComponent(f.name)}`
+        `https://ms-word-add-in-backend.vercel.app/file?name=${encodeURIComponent(
+          f.name
+        )}`
       );
       const js = await res.json(); // { html }
 
