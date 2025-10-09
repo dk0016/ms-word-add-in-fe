@@ -15,38 +15,39 @@
 // }
 
 export async function clearWordBody() {
-  try {
-    await Office.onReady();
-    await Word.run(async (context) => {
-      const body = context.document.body;
-      body.clear();
+  await Office.onReady();
+  await Word.run(async (context) => {
+    const body = context.document.body;
 
-      const paras = body.paragraphs;
-      paras.load("items");
-      await context.sync();
+    // Load all paragraphs
+    const paras = body.paragraphs;
+    paras.load("items");
+    await context.sync();
 
-      paras.items.forEach((p) => p.clear());
-      await context.sync();
-    });
-  } catch (e) {
-    console.error("Office clear error", e);
-    throw e;
-  }
+    // Delete each paragraph individually
+    paras.items.forEach((p) => p.delete());
+
+    await context.sync();
+  });
 }
 
 export async function insertHtmlToWord(html) {
-  try {
-    await Office.onReady();
-    await Word.run(async (context) => {
-      const body = context.document.body;
+  await Office.onReady();
+  await Word.run(async (context) => {
+    const body = context.document.body;
 
-      body.clear(); // extra safety
-      body.insertHtml(html, Word.InsertLocation.start);
+    // Ensure the body is empty
+    const paras = body.paragraphs;
+    paras.load("items");
+    await context.sync();
 
-      await context.sync();
-    });
-  } catch (e) {
-    console.error("Office insertion error", e);
-    throw e;
-  }
+    paras.items.forEach((p) => p.delete());
+    await context.sync();
+
+    // Wrap HTML in a div to prevent style inheritance
+    const wrappedHtml = `<div style="margin:0; padding:0; list-style:none;">${html}</div>`;
+    body.insertHtml(wrappedHtml, Word.InsertLocation.start);
+
+    await context.sync();
+  });
 }

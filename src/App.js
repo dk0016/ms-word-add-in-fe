@@ -76,34 +76,18 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(null);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(
-          "https://ms-word-add-in-backend.vercel.app/files"
-        );
-        const js = await res.json();
-        setFiles(js);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    load();
-  }, []);
-
   const onClick = async (f) => {
     setSelected(f.name);
     setLoading(true);
 
-    // Clear left panel immediately and show placeholder
     try {
+      // Immediately clear Word panel
       await clearWordBody();
       await insertHtmlToWord("<p>Loading document...</p>");
     } catch (e) {
       console.error("Error clearing Word panel", e);
     }
 
-    // Fetch and insert the actual document
     try {
       const res = await fetch(
         `https://ms-word-add-in-backend.vercel.app/file?name=${encodeURIComponent(
@@ -120,6 +104,21 @@ export default function App() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch(
+          "https://ms-word-add-in-backend.vercel.app/files"
+        );
+        const js = await res.json();
+        setFiles(js);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    load();
+  }, []);
 
   return (
     <div style={{ padding: 12, fontFamily: "Segoe UI, sans-serif" }}>
