@@ -5,6 +5,14 @@ import App from "./App";
 const container = document.getElementById("root");
 const root = createRoot(container);
 
+// Helper to detect if running inside MS Word/Excel/Office
+function isRunningInOffice() {
+  return (
+    typeof window !== "undefined" &&
+    (window.Office || window.location.href.includes("taskpane.html"))
+  );
+}
+
 // Initialize Office Add-in
 Office.onReady((info) => {
   if (info.host === "Word") {
@@ -12,14 +20,8 @@ Office.onReady((info) => {
   }
 });
 
-// ✅ Conditionally load Office.js only when inside Office environment
-if (isRunningInOffice()) {
-  // Publish the loading promise on window so other modules can await it.
-  window.__officeReady = loadOfficeJs()
-    .then(() => {
-      console.log("✅ Office.js loaded successfully");
-    })
-    .catch((e) => console.warn("⚠️ Office.js failed to load:", e));
-} else {
+// If not running in Office environment, render the app directly
+if (!isRunningInOffice()) {
   console.log("🖥️ Running locally — Office.js not loaded");
+  root.render(<App />);
 }
